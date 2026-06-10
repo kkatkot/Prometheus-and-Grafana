@@ -1,114 +1,78 @@
-# Django ToDo List
+# Django ToDo List – Kubernetes Monitoring & Observability
 
-In this task you will enhance a todo list web application by adding a /metrics endpoint that returns the number of GET and POST requests in a Prometheus-compatible format.
+## Project Overview
 
-To do this task, you will need:
+Enhanced a Django-based ToDo application by implementing a complete monitoring and observability stack in Kubernetes. The project focused on exposing application metrics, configuring Prometheus scraping, and building Grafana dashboards to monitor application traffic in a cloud-native environment.
 
-- CSS | [Skeleton](http://getskeleton.com/)
-- JS  | [jQuery](https://jquery.com/)
+## My Contributions
 
-## Explore
+### Application Monitoring
 
-Try it out by installing the requirements (the following commands work only with Python 3.8 and higher, due to Django 4):
+* Implemented a custom `/metrics` endpoint in Django.
+* Integrated **Prometheus Client** to expose application metrics in Prometheus-compatible format.
+* Created custom metrics to track HTTP GET and POST requests.
+* Exposed request statistics for real-time monitoring and analysis.
 
-```
-pip install -r requirements.txt
-```
+### Containerization & Deployment
 
-Create a database schema:
+* Updated application dependencies and Docker build process to include monitoring libraries.
+* Deployed the application as a containerized workload in Kubernetes.
+* Managed application configuration through Helm charts.
 
-```
-python manage.py migrate
-```
+### Kubernetes & Helm
 
-And then start the server (default is http://localhost:8000):
+* Provisioned a local Kubernetes environment using **Kind**.
+* Configured and deployed the application using **Helm**.
+* Created and customized Kubernetes manifests for application deployment and service exposure.
+* Implemented **ServiceMonitor** resources for automatic Prometheus target discovery.
+* Configured Kubernetes Services and labels required for Prometheus scraping.
 
-```
-python manage.py runserver
-```
+### Observability Stack
 
-Now you can browse the [API](http://localhost:8000/api/) or start on the [landing page](http://localhost:8000/).
+* Installed and configured the **kube-prometheus-stack** using Helm.
+* Integrated the application with **Prometheus Operator**.
+* Verified metric collection and target discovery through Prometheus.
+* Enabled automated monitoring of application endpoints.
 
-## Task
-Follow the steps below to complete the task:
+### Grafana Dashboards
 
-1. Fork the repository to your GitHub account.
+* Designed Grafana dashboards to visualize application metrics.
+* Created panels displaying:
 
-2. Create a new `/metrics` endpoint (not `api/metrics`):
-   - Modify the application code to include a `/metrics` endpoint.
-   - Ensure it returns the number of GET and POST requests in a Prometheus-compatible format.
+  * HTTP request rates by method (GET/POST)
+  * Request metric creation timestamps
+  * Application activity trends
+* Configured PromQL queries for real-time monitoring and analysis.
 
-3. Add Prometheus library:
-   - Include `prometheus_client` in the application's requirements.
-   - Ensure it's installed during the Docker build process.
+## Technologies
 
-4. Cluster setup:
-   - Use `kind` to spin up a cluster from a `cluster.yml` configuration file.
+**Backend**
 
-5. Pull the kube-prometheus-stack:
-   - [Prometheus](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
-   ```bash
-   helm pull prometheus-community/kube-prometheus-stack --version <version_number> --untar
-   ```
+* Python
+* Django
+* Django REST Framework
+* Prometheus Client
 
-6. Install the kube-prometheus-stack Helm chart:
-   ```bash
-   helm install kube-prometheus-stack ./kube-prometheus-stack
-   ```
-    * **Note**: If you encounter issues deploying on Ubuntu, particularly related to the admission controller, find the `admissionWebhooks` section in the `values.yaml` and set:
-   ```yaml
-   admissionWebhooks:
-     enabled: false
-   ```
+**DevOps & Cloud Native**
 
-7. Modify the `values.yaml` file in the `todoapp` Helm chart:
-   ```yaml
-      serviceMonitor:
-        enabled: true
-        labels: {}
-        interval: 10s
-        path: /metrics
-        port: http
-    ```
+* Docker
+* Kubernetes
+* Kind
+* Helm
+* Prometheus
+* Prometheus Operator
+* ServiceMonitor
+* Grafana
 
-8. Configure your `todoapp` Helm chart:
-   - In the Helm chart's templates directory, create a new file named `servicemonitor.yaml` with the necessary configuration.
-   - Ensure your app's `service.yaml` exposes the metrics port and has the necessary labels for the ServiceMonitor to select.
-   - Perform port forwarding to your application service to expose the metrics endpoint:
-      ```bash
-      kubectl port-forward svc/<your-service-name> 8080:<app-port>
-      ```
-9. Apply Helm Chart:
-   - Apply the Helm chart to the cluster.
-   - Verify that the ServiceMonitor has been created.
+## Key DevOps Skills Demonstrated
 
-10. Verify Prometheus scraping:
-   - Check Prometheus dashboard for the target status to ensure it's scraping metrics from the `todoapp`.
-
-11. Create Grafana dashboard:
-   - Open the Grafana UI and click on the **+** icon in the sidebar to create a new dashboard.
-   - Click **Add new panel** to start configuring your first metric visualization.
-
-12. Visualize total HTTP requests:
-    - Set up a panel titled **Total HTTP Requests**.
-    - Use the query to visualize the total number of HTTP requests:
-        ```
-        sum(rate(<your_custom_metric>[5m])) by (method)
-        ```
-    - This query will show the rate of HTTP requests per second, averaged over the past 5 minutes, broken down by method (GET or POST).
-    - Choose a visualization type such as Graph, Bar Gauge, or Stat to represent this data.
-
-13. Visualize HTTP requests creation time:
-    - Add a panel titled **HTTP Requests Creation Time**.
-    - Use the query to visualize the creation time of the requests:
-        ```
-        <your_custom_metric>
-        ```
-    - This metric represents the time when the HTTP request counters were created or reset, which can be useful for identifying when the application was restarted.
-    - Choose a Singlestat or Stat visualization for this metric.
-
-14. Customize panel settings:
-    - Adjust panel settings such as axes, legend, and thresholds as desired.
-    - Utilize Grafana’s functions for formatting the display.
-
-14. Submit a PR with your changes and attach screenshots of your Grafana dashboard for validation on the specified platform.
+* Kubernetes Deployment & Management
+* Helm Chart Development
+* Monitoring & Observability
+* Prometheus Metrics Collection
+* Grafana Dashboard Creation
+* Service Discovery Configuration
+* Containerization with Docker
+* Infrastructure as Code
+* Cloud-Native Application Operations
+* Application Performance Monitoring (APM)
